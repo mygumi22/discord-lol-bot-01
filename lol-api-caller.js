@@ -20,7 +20,7 @@ const Caller = {
         }
     },
     getRankGameByEncryptId: async (encId) => {
-        const result = await axios({
+        const axiosResult = await axios({
             url: `${process.env.RIOT_API_URL}/lol/league/v4/entries/by-summoner/${encId}`,
             method: 'GET',
             headers: {
@@ -28,7 +28,12 @@ const Caller = {
             }
         });
 
-        return result.data[0];
+        const result = {
+            solo: axiosResult.data.find(item => item.queueType === 'RANKED_SOLO_5x5'),
+            flex: axiosResult.data.find(item => item.queueType === 'RANKED_FLEX_SR'),
+        };
+
+        return result;
     },
     getSoloRankInfoByEncryptId: async (encId) => {
 

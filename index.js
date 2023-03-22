@@ -24,8 +24,11 @@ client.on(Events.MessageCreate, async msg => {
 
     // 전적 검색 채널에 메시지가 입력되었을 때
     if (msg.channel.name == '전적검색') {
-        const embedMessage = await LolMessageBuilder.getSummonerSearchResult(msg.content, msg.author);
-        msg.channel.send({ embeds: [embedMessage] });
+        // 소환사 정보 검색
+        if (msg.content.startsWith('!소환사')) {
+            const embedMessage = await LolMessageBuilder.getSummonerSearchResult(msg.content.split('!소환사 ')[1], msg.author);
+            msg.channel.send({ embeds: [embedMessage] });
+        }
     }
 
     // msg.reply(`입력을 받았습니다`);

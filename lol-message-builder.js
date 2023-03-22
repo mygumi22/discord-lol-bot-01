@@ -25,49 +25,159 @@ const MessageBuilder = {
             return result;
         } else {
             const leagueInfo = await LolApiCaller.getRankGameByEncryptId(summonerInfo.id);
+            const soloRankInfo = leagueInfo.solo;
+            const flexRankInfo = leagueInfo.flex;
+
+            console.log(leagueInfo);
 
             const result = new EmbedBuilder()
                 .setColor(0xFF9900)
                 .setTitle(`${summonName} 소환사 님의 정보`)
                 .setDescription(`[ ${messageAuthor} ]`)
                 // .setThumbnail(`https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_${leagueInfo.tier}.png?raw=true`)
-                .addFields(
+                
+                .setFooter({ text: `@developed by GuMin` });
+
+            if (soloRankInfo != null) {
+                result.addFields(
                     { 
-                        name: '티어 정보', 
-                        value: `${leagueInfo.tier} ${rankConverter(leagueInfo.rank)} | ${leagueInfo.leaguePoints}LP`,
-                    },
-                    {
-                        name: '승/패 | 승률', 
-                        value: `${leagueInfo.wins}승 ${leagueInfo.losses}패 | ${Number(Number(leagueInfo.wins) / (Number(leagueInfo.losses) + Number(leagueInfo.wins)) * 100).toFixed(2)}%`,
+                        name: `솔로 랭크 | ${soloRankInfo.tier} ${rankConverter(soloRankInfo.rank)} | ${soloRankInfo.leaguePoints}LP`, 
+                        value: `${soloRankInfo.wins}승 ${soloRankInfo.losses}패 | ${Number(Number(soloRankInfo.wins) / (Number(soloRankInfo.losses) + Number(soloRankInfo.wins)) * 100).toFixed(2)}%`,
                     }
                 )
-                .setFooter({ text: `${leagueInfo.queueType == 'RANKED_SOLO_5x5' ? '솔로랭크 기준 티어입니다.' : '자유랭크 기준 티어입니다.'}` });
+            }
+
+            if (flexRankInfo != null) {
+                result.addFields(
+                    {
+                        name: `자유 랭크 | ${flexRankInfo.tier} ${rankConverter(flexRankInfo.rank)} | ${flexRankInfo.leaguePoints}LP`, 
+                        value: `${flexRankInfo.wins}승 ${flexRankInfo.losses}패 | ${Number(Number(flexRankInfo.wins) / (Number(flexRankInfo.losses) + Number(flexRankInfo.wins)) * 100).toFixed(2)}%`,
+                    }
+                )
+            }
 
             // 티어 이미지 추가
-            if (leagueInfo.rank == 'IRON') {
-                result
-            } else if (leagueInfo.tier == 'BRONZE') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_BRONZE.png?raw=true');
-            } else if (leagueInfo.tier == 'SILVER') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_SILVER.png?raw=true');
-            } else if (leagueInfo.tier == 'GOLD') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GOLD.png?raw=true');
-            } else if (leagueInfo.tier == 'PLATINUM') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_PLATINUM.png?raw=true');
-            } else if (leagueInfo.tier == 'DIAMOND') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DIAMOND.png?raw=true');
-            } else if (leagueInfo.tier == 'MASTER') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_MASTER.png?raw=true');
-            } else if (leagueInfo.tier == 'GRANDMASTER') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GRANDMASTER.png?raw=true');
-            } else if (leagueInfo.tier == 'CHALLENGER') {
-                result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_CHALLENGER.png?raw=true');
+            if (soloRankInfo != null && flexRankInfo != null) {
+
+                console.log(compareTier(soloRankInfo.tier, flexRankInfo.tier) );
+
+                if (compareTier(soloRankInfo.tier, flexRankInfo.tier) == 'solo') {
+                    if (soloRankInfo.rank == 'IRON') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_IRON.png?raw=true');
+                    } else if (soloRankInfo.tier == 'BRONZE') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_BRONZE.png?raw=true');
+                    } else if (soloRankInfo.tier == 'SILVER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_SILVER.png?raw=true');
+                    } else if (soloRankInfo.tier == 'GOLD') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GOLD.png?raw=true');
+                    } else if (soloRankInfo.tier == 'PLATINUM') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_PLATINUM.png?raw=true');
+                    } else if (soloRankInfo.tier == 'DIAMOND') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DIAMOND.png?raw=true');
+                    } else if (soloRankInfo.tier == 'MASTER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_MASTER.png?raw=true');
+                    } else if (soloRankInfo.tier == 'GRANDMASTER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GRANDMASTER.png?raw=true');
+                    } else if (soloRankInfo.tier == 'CHALLENGER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_CHALLENGER.png?raw=true');
+                    } else {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DEFAULT.png?raw=true');
+                    }
+                } else {
+                    if (flexRankInfo.tier == 'IRON') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_IRON.png?raw=true');
+                    } else if (flexRankInfo.tier == 'BRONZE') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_BRONZE.png?raw=true');
+                    } else if (flexRankInfo.tier == 'SILVER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_SILVER.png?raw=true');
+                    } else if (flexRankInfo.tier == 'GOLD') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GOLD.png?raw=true');
+                    } else if (flexRankInfo.tier == 'PLATINUM') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_PLATINUM.png?raw=true');
+                    } else if (flexRankInfo.tier == 'DIAMOND') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DIAMOND.png?raw=true');
+                    } else if (flexRankInfo.tier == 'MASTER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_MASTER.png?raw=true');
+                    } else if (flexRankInfo.tier == 'GRANDMASTER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GRANDMASTER.png?raw=true');
+                    } else if (flexRankInfo.tier == 'CHALLENGER') {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_CHALLENGER.png?raw=true');
+                    } else {
+                        result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DEFAULT.png?raw=true');
+                    }
+                }
+            } else if (soloRankInfo == null && flexRankInfo != null) {
+                if (flexRankInfo.tier == 'IRON') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_IRON.png?raw=true');
+                } else if (flexRankInfo.tier == 'BRONZE') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_BRONZE.png?raw=true');
+                } else if (flexRankInfo.tier == 'SILVER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_SILVER.png?raw=true');
+                } else if (flexRankInfo.tier == 'GOLD') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GOLD.png?raw=true');
+                } else if (flexRankInfo.tier == 'PLATINUM') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_PLATINUM.png?raw=true');
+                } else if (flexRankInfo.tier == 'DIAMOND') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DIAMOND.png?raw=true');
+                } else if (flexRankInfo.tier == 'MASTER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_MASTER.png?raw=true');
+                } else if (flexRankInfo.tier == 'GRANDMASTER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GRANDMASTER.png?raw=true');
+                } else if (flexRankInfo.tier == 'CHALLENGER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_CHALLENGER.png?raw=true');
+                } else {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DEFAULT.png?raw=true');
+                }
+            } else if (soloRankInfo != null && flexRankInfo == null) {
+                if (soloRankInfo.rank == 'IRON') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_IRON.png?raw=true');
+                } else if (soloRankInfo.tier == 'BRONZE') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_BRONZE.png?raw=true');
+                } else if (soloRankInfo.tier == 'SILVER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_SILVER.png?raw=true');
+                } else if (soloRankInfo.tier == 'GOLD') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GOLD.png?raw=true');
+                } else if (soloRankInfo.tier == 'PLATINUM') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_PLATINUM.png?raw=true');
+                } else if (soloRankInfo.tier == 'DIAMOND') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DIAMOND.png?raw=true');
+                } else if (soloRankInfo.tier == 'MASTER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_MASTER.png?raw=true');
+                } else if (soloRankInfo.tier == 'GRANDMASTER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_GRANDMASTER.png?raw=true');
+                } else if (soloRankInfo.tier == 'CHALLENGER') {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_CHALLENGER.png?raw=true');
+                } else {
+                    result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DEFAULT.png?raw=true');
+                }
             } else {
                 result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_DEFAULT.png?raw=true');
             }
 
             return result;
         }
+    }
+}
+
+function compareTier(solo, flex) {
+    const tier = {
+        'IRON': 1,
+        'BRONZE': 2,
+        'SILVER': 3,
+        'GOLD': 4,
+        'PLATINUM': 5,
+        'DIAMOND': 6,
+        'MASTER': 7,
+        'GRANDMASTER': 8,
+        'CHALLENGER': 9,
+    };
+
+    if (tier[solo] > tier[flex]) {
+        return 'solo';
+    } else if (tier[solo] < tier[flex]) {
+        return 'flex';
+    } else {
+        return 'solo';
     }
 }
 
@@ -80,7 +190,7 @@ function rankConverter(rank) {
     else if (rank == 'III') {
         return 3;
     }
-    else if (rank == 'VI') {
+    else if (rank == 'IV') {
         return 4;
     }
 }
