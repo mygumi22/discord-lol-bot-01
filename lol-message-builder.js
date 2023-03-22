@@ -14,7 +14,6 @@ const MessageBuilder = {
         }
 
         const summonerInfo = await LolApiCaller.getSummonerByName(summonName);
-        console.log(summonerInfo);
 
         // 소환사명이 존재 하지 않는 경우
         if (summonerInfo == null) {
@@ -24,11 +23,14 @@ const MessageBuilder = {
 
             return result;
         } else {
+            // 랭크 정보 조회
             const leagueInfo = await LolApiCaller.getRankGameByEncryptId(summonerInfo.id);
             const soloRankInfo = leagueInfo.solo;
             const flexRankInfo = leagueInfo.flex;
 
-            console.log(leagueInfo);
+            const LOL_CHAMPION_LIST = await LolApiCaller.getChampionJson();
+            const ARR_LOL_CHAMPION = Object.keys(LOL_CHAMPION_LIST).map(key => LOL_CHAMPION_LIST[key]);
+            const summonersChampionList = await LolApiCaller.getChampionListByEncryptId(summonerInfo.id, 5);
 
             const result = new EmbedBuilder()
                 .setColor(0xFF9900)
@@ -55,6 +57,22 @@ const MessageBuilder = {
                     }
                 )
             }
+
+            // 모스트 1 챔피언
+            result.addFields(
+                {
+                    name: `모스트 챔피언 | ${ARR_LOL_CHAMPION.find(item => item.key == summonersChampionList[0].championId).name}`, 
+                    value: `Proficiency Level: ${summonersChampionList[0].championLevel}.Lv / Champion Point: ${summonersChampionList[0].championPoints}pt`,
+                }
+            );
+
+            // OP.GG 검색하기
+            result.addFields(
+                {
+                    name: `OP.GG 에서 소환사 정보 검색하기`, 
+                    value: `https://www.op.gg/summoners/kr/${summonName}`,
+                }
+            );
 
             // 티어 이미지 추가
             if (soloRankInfo != null && flexRankInfo != null) {

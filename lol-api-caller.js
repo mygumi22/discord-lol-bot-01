@@ -35,12 +35,25 @@ const Caller = {
 
         return result;
     },
-    getSoloRankInfoByEncryptId: async (encId) => {
+    getChampionListByEncryptId: async (encId, topCount) => {
+        const axiosResult = await axios({
+            url: `${process.env.RIOT_API_URL}/lol/champion-mastery/v4/champion-masteries/by-summoner/${encId}/top?count=${topCount}`,
+            method: 'GET',
+            headers: {
+                "X-Riot-Token": process.env.RIOT_API_KEY
+            }
+        });
 
+        return axiosResult.data;
     },
-    get5on5RankInfoByEncryptId: async (encId) => {
+    getChampionJson: async () => {
+        const axiosResult = await axios({
+            url: `https://ddragon.leagueoflegends.com/cdn/13.6.1/data/ko_KR/champion.json`,
+            method: 'GET',
+        });
 
-    },
+        return axiosResult.data.data;
+    }
 }
 
 module.exports = Caller
