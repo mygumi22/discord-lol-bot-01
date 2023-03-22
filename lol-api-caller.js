@@ -29,7 +29,13 @@ const Caller = {
         });
 
         return result.data[0];
-    }
+    },
+    getSoloRankInfoByEncryptId: async (encId) => {
+
+    },
+    get5on5RankInfoByEncryptId: async (encId) => {
+
+    },
 }
 
 module.exports = Caller
