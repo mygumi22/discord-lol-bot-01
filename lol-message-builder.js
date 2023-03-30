@@ -2,6 +2,25 @@ const { EmbedBuilder } = require('discord.js');
 const LolApiCaller = require('./lol-api-caller');
 
 const MessageBuilder = {
+  getBotDescriptionMessage: async () => {
+    const result = `안녕하세요😄\n동산교회 게이머를 위한 롤 전적검색 봇입니다.\n\n` + 
+		`해당 봇은 RIOT GAMES에서 제공하는 API를 사용하여 원하는 사용자의 정보를 조회하고 있습니다.\n` +
+		`무료로 해당 API를 사용하고 있어 1sec per 최대 5번, 1min per 약 12번 정도의 사용자 정보를 조회할 수 있습니다👻\n` +
+		`너무 과도한 요청을 보낼 시 개발자가 상당히 슬퍼지니 이 점 유의하여서 봇을 이용해주시기 바랍니다💛\n\n` +
+		`기타 궁금한 내용이 있으신 경우 개발자(nimug)에게 문의해주세요😨`;
+
+    return result;
+  },
+
+	getCommandDescriptionMessage: async () => {
+		const result = `🔔 명령어 정리\n\n` +
+		`$설명 : 봇에 대한 기본 설명을 제공합니다.\n` +
+		`$명령어 : 봇이 제공하고 있는 명령어에 대해 설명합니다.\n` +
+		`$소환사 {소환사명} : 소환사의 솔로랭크 / 자유랭크 정보를 제공합니다.`;
+
+    return result;
+	},
+
   getSummonerSearchResult: async (summonName, messageAuthor) => {
     // 특정 특수문자 입력시 존재하지 않는 소환사로 처리
     const regex1 = /;/gi;
@@ -37,7 +56,7 @@ const MessageBuilder = {
         .setColor(0xff9900)
         .setTitle(`${summonName} 소환사 님의 정보`)
         .setDescription(`[ ${messageAuthor} ]`)
-        .setFooter({ text: `@developed by GuMin` });
+        .setFooter({ text: `@developed by nimug` });
 
       if (soloRankInfo != null) {
         result.addFields({

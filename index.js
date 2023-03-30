@@ -31,12 +31,21 @@ client.on(Events.MessageCreate, async (msg) => {
   // 전적 검색 채널에 메시지가 입력되었을 때
   if (msg.channel.name == '전적검색') {
     // 봇 설명
-    if (msg.content.startsWith('!설명')) {
-      logger.info(`설명 호출`);
+    if (msg.content.startsWith('$설명')) {
+      logger.info(`[${msg.author}] 봇 설명 호출`);
+      const descriptionMessage = await LolMessageBuilder.getBotDescriptionMessage();;
+      msg.channel.send(descriptionMessage);
+    }
+
+    // 명령어 설명
+    if (msg.content.startsWith('$명령어')) {
+      logger.info(`[${msg.author}] 명령어 설명 호출`);
+      const descriptionMessage = await LolMessageBuilder.getCommandDescriptionMessage();
+      msg.channel.send(descriptionMessage);
     }
 
     // 소환사 정보 검색
-    if (msg.content.startsWith('!소환사')) {
+    if (msg.content.startsWith('$소환사')) {
       logger.info(`[${msg.author}] 소환사 정보 검색 - 소환사명 : [${msg.content.split('!소환사 ')[1]}]`);
       const embedMessage = await LolMessageBuilder.getSummonerSearchResult(msg.content.split('!소환사 ')[1], msg.author);
       msg.channel.send({ embeds: [embedMessage] });
