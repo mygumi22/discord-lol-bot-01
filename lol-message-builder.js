@@ -76,9 +76,6 @@ const MessageBuilder = {
 
             // 티어 이미지 추가
             if (soloRankInfo != null && flexRankInfo != null) {
-
-                console.log(compareTier(soloRankInfo.tier, flexRankInfo.tier) );
-
                 if (compareTier(soloRankInfo.tier, flexRankInfo.tier) == 'solo') {
                     if (soloRankInfo.rank == 'IRON') {
                         result.setThumbnail('https://github.com/mygumi22/discord-lol-bot-01/blob/master/public/images/Emblem_IRON.png?raw=true');
