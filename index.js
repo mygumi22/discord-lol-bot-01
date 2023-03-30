@@ -46,8 +46,8 @@ client.on(Events.MessageCreate, async (msg) => {
 
     // 소환사 정보 검색
     if (msg.content.startsWith('$소환사')) {
-      logger.info(`[${msg.author}] 소환사 정보 검색 - 소환사명 : [${msg.content.split('!소환사 ')[1]}]`);
-      const embedMessage = await LolMessageBuilder.getSummonerSearchResult(msg.content.split('!소환사 ')[1], msg.author);
+      logger.info(`[${msg.author}] 소환사 정보 검색 - 소환사명 : [${msg.content.split('$소환사 ')[1]}]`);
+      const embedMessage = await LolMessageBuilder.getSummonerSearchResult(msg.content.split('$소환사 ')[1], msg.author);
       msg.channel.send({ embeds: [embedMessage] });
     }
   }
